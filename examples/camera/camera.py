@@ -8,6 +8,9 @@ from collections import deque
 # set license
 barcodeQrSDK.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==")
 
+
+
+
 # initialize barcode reader
 reader = barcodeQrSDK.createInstance()
 
@@ -25,19 +28,24 @@ def get_time():
     capturetime = time.strftime("%Y%m%d%H%M%S", localtime)
     return capturetime
 
+def print_Qr_code():
+    a=2
+    
+
+
 
 def read_barcode():
 
-    vc = cv2.VideoCapture(0)
+    vc = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
     if not vc.isOpened(): 
         return 
     
-    threadn = 1 # cv2.getNumberOfCPUs()
+    threadn = 8 # cv2.getNumberOfCPUs()
     pool = ThreadPool(processes = threadn)
     barcodeTasks = deque()
 
-    windowName = "Barcode Reader"
+    windowName = "Barcode Reader Esc to quit"
 
     while True:
         rval, frame = vc.read()
@@ -61,9 +69,11 @@ def read_barcode():
 
         if len(barcodeTasks) < threadn:
             task = pool.apply_async(process_frame, (frame.copy(), ))
+            
             barcodeTasks.append(task)
 
         cv2.imshow(windowName, frame)
+        
         # 'ESC' for quit
         key = cv2.waitKey(1)
         if key == 27:

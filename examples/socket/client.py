@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2 
 from simplesocket import SimpleSocket, DataType
 import json
 import barcodeQrSDK
@@ -10,9 +10,9 @@ isDisconnected = False
 msgQueue = []
 isReady = True
 
-cap = cv.VideoCapture(0)
-cap.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 if cap.isOpened() == False:
     print("Unable to read camera feed")
@@ -73,7 +73,7 @@ def run():
         # Send data to server
         if isReady:
             isReady = False
-            webp = cv.imencode('.webp', frame, [cv.IMWRITE_WEBP_QUALITY, 90])[1]
+            webp = cv2.imencode('.webp', frame, [cv2.IMWRITE_WEBP_QUALITY, 90])[1]
             msgQueue.append((DataType.WEBP, webp.tobytes()))
                 
         # Show local and remote results
@@ -105,15 +105,15 @@ def run():
                 y3 = result['y3']
                 x4 = result['x4']
                 y4 = result['y4']
-                cv.putText(frame, text, (x1, y1), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                cv.drawContours(frame, [np.int0([(x1, y1), (x2, y2), (x3, y3), (x4, y4)])], 0, (0, 255, 0), 2)
+                cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                cv2.drawContours(frame, [np.int0([(x1, y1), (x2, y2), (x3, y3), (x4, y4)])], 0, (0, 255, 0), 2)
             
-            cv.putText(frame, "Remote decoding time: " + str(int(g_remote_results[1])) + " ms", (10, 60), cv.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+            cv2.putText(frame, "Remote decoding time: " + str(int(g_remote_results[1])) + " ms", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
             
-        cv.imshow('client', frame)
-        if cv.waitKey(10) == 27:
+        cv2.imshow('client', frame)
+        if cv2.waitKey(10) == 27:
             break
-        
+    cv2.destroyWindow('client')    
     client.shutdown()
        
 if __name__ == '__main__':

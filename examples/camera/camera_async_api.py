@@ -24,7 +24,7 @@ def run():
     
     scanner.addAsyncListener(callback)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
     while True:
         ret, image = cap.read()
         if image is not None:
